@@ -1,0 +1,56 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ nx-app ]
+  schedule:
+    - cron: "0 8-22/2 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+        repository: caiocampos/caiocampos.github.io
+        ref: nx-app
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - name: Get config
+      run: curl -O https://raw.githubusercontent.com/caoancap/readme-base/refs/heads/main/config.json
+    - name: copy config
+      run: cp ./config.json ./src/config.json
+    - name: Install
+      run: npm install
+    - name: Run translate service
+      run: |
+           npm run libretranslate
+           docker ps
+    - name: Build
+      run: |
+           export SERVER_URL=127.0.0.1
+           npm run build
+    - name: Stop translate service
+      run: npm run libretranslate-stop
+    - name: Adjustment
+      run: |
+           cp .nojekyll ./out/.nojekyll
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: master
+        folder: out
