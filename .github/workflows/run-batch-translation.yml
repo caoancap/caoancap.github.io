@@ -1,0 +1,57 @@
+name: Run batch translation
+
+on:
+  schedule:
+   - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    env:
+      APP_PORT: 8080
+      APP_ENV: production
+      
+      TRANSLATION_API_URL: http://127.0.0.1:5000
+      TRANSLATION_API_TIMEOUT: 20s
+      
+      GITHUB_API_URL: https://api.github.com
+      GITHUB_API_TIMEOUT: 10s
+      GITHUB_API_USER_LOGIN: caoancap
+      GITHUB_API_ORGS_LOGIN: "[\"cao-ancap\"]"
+
+      REDIS_ADDR: ${{ secrets.REDIS_ADDR }}
+      REDIS_USER: ${{ secrets.REDIS_USER }}
+      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+      REDIS_DB: ${{ secrets.REDIS_DB }}
+      REDIS_CACHE_TTL: 168h
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        node-version: [24.x]
+
+    steps:
+    - name: Checkout cached-translation-middleware
+      uses: actions/checkout@v6
+      with:
+        persist-credentials: false
+        repository: caoancap/cached-translation-middleware
+
+    - name: Set up Go
+      uses: actions/setup-go@v6
+      with:
+        go-version: 1.26
+
+    - name: Build batch
+      run: bash batch-build.sh
+
+    - name: Run libretranslate
+      run: bash libretranslate.sh
+
+    - name: Run batch
+      run: ./batch
+
+    - name: Stop libretranslate
+      run: bash libretranslate-stop.sh
