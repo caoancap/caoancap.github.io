@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   schedule:
-    - cron: "0 0-2,8-23/4 * * *"
+    - cron: "0 2 * * */3"
   workflow_dispatch:
 
 jobs:
