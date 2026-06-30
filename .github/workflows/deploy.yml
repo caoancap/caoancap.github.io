@@ -38,7 +38,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         persist-credentials: false
         repository: caiocampos/caiocampos.github.io
@@ -51,7 +51,7 @@ jobs:
       run: cp ./config.json ./src/config.json
 
     - name: Checkout cached-translation-middleware
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         persist-credentials: false
         repository: caoancap/cached-translation-middleware
