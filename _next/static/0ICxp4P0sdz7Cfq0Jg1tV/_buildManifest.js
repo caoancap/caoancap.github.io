@@ -1,12 +1,12 @@
 self.__BUILD_MANIFEST = {
   "/": [
-    "static/chunks/3pq681qwavk7_.js"
+    "static/chunks/01foh_6lzevco.js"
   ],
   "/_error": [
-    "static/chunks/07ww-iwjh90-m.js"
+    "static/chunks/391r1f6zfjvev.js"
   ],
   "/home/[language]": [
-    "static/chunks/2v4e61b_zd57g.js"
+    "static/chunks/237qkev49p6bp.js"
   ],
   "__rewrites": {
     "afterFiles": [],
